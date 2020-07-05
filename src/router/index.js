@@ -1,5 +1,14 @@
+/*
+ * @Author: your name
+ * @Date: 2020-06-28 19:57:19
+ * @LastEditTime: 2020-06-28 21:39:01
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /vue-compiler/src/router/index.js
+ */ 
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+// import VueRouter from 'vue-router'
+import VueRouter from '../vueRouter/index'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)

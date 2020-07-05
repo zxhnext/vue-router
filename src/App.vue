@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-06-28 19:57:19
+ * @LastEditTime: 2020-06-28 21:09:35
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /vue-compiler/src/App.vue
+--> 
 <template>
   <div id="app">
     <div id="nav">
