@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-28 19:58:33
- * @LastEditTime: 2020-06-28 21:39:54
+ * @LastEditTime: 2020-07-06 21:02:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Editort
  * @FilePath: /vue-compiler/src/vuerouter/index.js
@@ -33,21 +33,38 @@ export default class VueRouter {
     constructor(options) {
         this.options = options
         this.routeMap = {}
+        this.mode = options.mode || 'hash'
         this.data = _Vue.observable({ // 创建一个响应式对象
-            current: '/' // 当前路由
+            current: this.getPath(this.mode, '/') // 当前路由
         })
+    }
+
+    getPath(mode, path) {
+        let upPath = this[mode+'GetPath']
+        if(upPath) {
+            return upPath(path)
+        }
+    }
+
+    historyGetPath(path) {
+        return path
+    }
+
+    hashGetPath(path) {
+        return `#${path}`
     }
 
     init() {
         this.createRouteMap()
         this.initComponents(_Vue)
-        this.initEvent()
+        this.initEvent(this.mode)
     }
 
     // 遍历路由规则，解析为键值对形式，存储到routeMap中
     createRouteMap() {
         this.options.routes.forEach(route => {
-            this.routeMap[route.path] = route.component
+            let path = this.getPath(this.mode, route.path)
+            this.routeMap[path] = route.component
         })
     }
 
@@ -75,9 +92,11 @@ export default class VueRouter {
                     // 第一个参数是data
                     // 第二个参数是标题
                     // 第三个参数是路由
-                    history.pushState({}, '', this.to)
+                    let path = this.$router.getPath(this.$router.mode, this.to)
+                    this.$router.data.current = path
+                    history.pushState({}, '', path)
+                    
                     // 因为这里是一个组件，所以这里的this指vue实例
-                    this.$router.data.current = this.to
                     e.preventDefault()
                 }
             }
@@ -89,14 +108,29 @@ export default class VueRouter {
             render(h) {
                 // data时响应式数据，改变后重新渲染
                 const component = _self.routeMap[_self.data.current]
+                if(this.$router.mode === 'hash') {
+                    if(_self.data.current !== window.location.hash) {
+                        window.location.hash = _self.data.current
+                    }
+                } else if(this.$router.mode === 'history') {
+                    if(_self.data.current !== window.location.pathname) {
+                        window.location.pathname = _self.data.current
+                    }
+                }
                 return h(component)
             }
         })
     }
 
-    initEvent() {
-        window.addEventListener('popstate', () => { // 监听popstate事件，导航栏改变时当前路由对应的component也要变
-            this.data.current = window.location.pathname
-        })
+    initEvent(mode) {
+        if(mode === 'hash') {
+            window.addEventListener('hashchange', () => {
+                this.data.current = window.location.hash
+            }, false)
+        } else if(mode === 'history') {
+            window.addEventListener('popstate', () => { // 监听popstate事件，导航栏改变时当前路由对应的component也要变
+                this.data.current = window.location.pathname
+            })
+        }
     }
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-28 19:57:19
- * @LastEditTime: 2020-06-28 21:39:01
+ * @LastEditTime: 2020-07-06 21:02:13
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /vue-compiler/src/router/index.js
@@ -30,7 +30,7 @@ Vue.use(VueRouter)
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })
